@@ -10,9 +10,6 @@ app.use(express.json());
 
 const BYBIT_BASE = "https://api.bybit.com/v5";
 
-// === ТВОЙ GPT API KEY прямо тут ===
-// !!! Заміняй на свій реальний ключ з https://platform.openai.com/api-keys
-
 // === API ендпоінти Bybit ===
 
 // Свічки (OHLCV)
@@ -113,9 +110,9 @@ app.post("/api/ai-analysis", async (req, res) => {
 
   try {
     const response = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-      model: "llama-3.3-70b-versatile", // ✅ актуальна модель
+      model: "llama-3.3-70b-versatile",
       messages: [
-        { role: "system", content: "Ти фінансовий аналітик, який пише короткі коментарі по крипторинку. На основі наданих даних дай короткий висновок трейдера для цього символу у форматі: [LONG / SHORT / WAIT] — [коротке пояснення, максимум 1-2 речення]. Не роби довгого аналізу, тільки суть." },
+        { role: "system", content: "Ти фінансовий аналітик, який пише короткі коментарі по крипторинку. На основі наданих даних дай короткий висновок трейдера у форматі: [LONG / SHORT / WAIT] — [коротке пояснення, максимум 1-2 речення]." },
         { role: "user", content: `${prompt}\nДані: ${JSON.stringify(marketData)}` }
       ]
     }, {
@@ -130,11 +127,10 @@ app.post("/api/ai-analysis", async (req, res) => {
   }
 });
 
-
 // === Видача React фронту ===
-app.use(express.static(path.join(__dirname, "trader-dashboard/build")));
+app.use(express.static(path.join(__dirname, "build")));
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "trader-dashboard/build", "index.html"));
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 // === Запуск сервера ===
