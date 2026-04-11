@@ -37,10 +37,10 @@ const PriceChart = ({ timestamps, prices, ema20, ema50 }) => {
   const trendRatio = lastEma20 / lastEma50;
   const trendPoints = lastPrice > lastEma20 && lastEma20 > lastEma50 ? 30 : 0;
 
-  // Правильний cleanup
+  // Правильний cleanup: копіюємо ref у змінну
   useEffect(() => {
+    const chartInstance = chartRef.current;
     return () => {
-      const chartInstance = chartRef.current;
       if (chartInstance) {
         chartInstance.destroy();
       }
@@ -53,13 +53,7 @@ const PriceChart = ({ timestamps, prices, ema20, ema50 }) => {
         Ціна + EMA — Тренд: {trendRatio?.toFixed(3)} ({trendPoints}/30 балів)
       </h2>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "30px",
-          flexWrap: "wrap",
-        }}
-      >
+      <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
         {/* Графік */}
         <div
           style={{

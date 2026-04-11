@@ -1,16 +1,23 @@
-// src/utils/strengthCalculator.js
-
-export const calculateTrendStrength = (prices, ema20, ema50, macdLine, rsi, volumes) => {
+export const calculateTrendStrength = (
+  prices,
+  ema20,
+  ema50,
+  macdLine,
+  rsi,
+  volumes
+) => {
   if (!prices || prices.length === 0) return 0;
 
-  const lastPrice = prices[prices.length - 1] || 0;
-  const lastEma20 = ema20[ema20.length - 1] || 0;
-  const lastEma50 = ema50[ema50.length - 1] || 0;
-  const lastMacd = macdLine[macdLine.length - 1] || 0;
-  const lastRsi = rsi[rsi.length - 1] || 0;
+  const lastEma20 = ema20?.[ema20.length - 1] || 0;
+  const lastEma50 = ema50?.[ema50.length - 1] || 0;
+  const lastMacd = macdLine?.[macdLine.length - 1] || 0;
+  const lastRsi = rsi?.[rsi.length - 1] || 0;
 
   const lastVolume = volumes?.[volumes.length - 1] || 0;
-  const avgVolume = volumes?.slice(-20).reduce((a, b) => a + b, 0) / 20 || 0;
+  const avgVolume =
+    volumes && volumes.length >= 20
+      ? volumes.slice(-20).reduce((a, b) => a + b, 0) / 20
+      : 0;
 
   let strength = 0;
 
