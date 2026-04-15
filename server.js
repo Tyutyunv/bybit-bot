@@ -1,8 +1,11 @@
-require("dotenv").config();
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
-const path = require("path");
+import express from "express";
+import axios from "axios";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
@@ -119,7 +122,7 @@ app.post("/api/ai-analysis", async (req, res) => {
       headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` }
     });
 
-    const aiComment = response.data.choices[0].message.content;
+    const aiComment = response.data?.choices?.[0]?.message?.content || "No response";
     res.json({ comment: aiComment });
   } catch (err) {
     console.error("Groq AI error:", err.response?.data || err.message);
