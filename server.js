@@ -1,11 +1,8 @@
-import express from "express";
-import axios from "axios";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+require("dotenv").config();
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -19,7 +16,6 @@ const BYBIT_BASE = "https://api.bybit.com/v5";
 app.get("/candles", async (req, res) => {
   try {
     const { symbol = "BTCUSDT", interval = "60", limit = "120" } = req.query;
-
     const response = await axios.get(`${BYBIT_BASE}/market/kline`, {
       params: { category: "linear", symbol: symbol.toUpperCase(), interval, limit: parseInt(limit) }
     });
@@ -84,14 +80,8 @@ app.get("/funding", async (req, res) => {
 app.get("/open-interest", async (req, res) => {
   try {
     const { symbol = "BTCUSDT" } = req.query;
-
     const response = await axios.get(`${BYBIT_BASE}/market/open-interest`, {
-      params: {
-        category: "linear",
-        symbol: symbol.toUpperCase(),
-        intervalTime: "1h",
-        limit: 1
-      }
+      params: { category: "linear", symbol: symbol.toUpperCase(), intervalTime: "1h", limit: 1 }
     });
 
     const list = response.data.result.list || [];
@@ -110,7 +100,6 @@ app.get("/open-interest", async (req, res) => {
 // === Новий ендпоінт для GPT аналізу ===
 app.post("/api/ai-analysis", async (req, res) => {
   const { prompt, marketData } = req.body;
-
   try {
     const response = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
       model: "llama-3.3-70b-versatile",
@@ -137,5 +126,18 @@ app.use((req, res) => {
 });
 
 // === Запуск сервера ===
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+const DEFAULT_PORT = 3000;
+const PORT = process.env.PORT || DEFAULT_PORT;
+
+app.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+}).on("error", err => {
+  if (err.code === "EADDRINUSE") {
+    const fallbackPort = 4000;
+    app.listen(fallbackPort, () => {
+      console.log(`⚠️ Port ${DEFAULT_PORT} busy, switched to http://localhost:${fallbackPort}`);
+    });
+  } else {
+    throw err;
+  }
+});
