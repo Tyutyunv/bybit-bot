@@ -12,8 +12,8 @@ const AIAnalysisButton = ({ marketData }) => {
     setComment("");
     setVisible(true);
     try {
-      const res = await axios.post("http://localhost:3000/api/ai-analysis", {
-        prompt: "Зроби аналіз ринку BTCUSDT на основі цих даних.",
+      const res = await axios.post("/api/ai-analysis", {
+        prompt: "Зроби аналіз ринку кріпто пари на основі цих даних.",
         marketData
       });
       setComment(res.data.comment);
